@@ -1,0 +1,18 @@
+<div class="col-12 col-lg-6 mx-auto">
+  <div class="card">
+    <div class="card-body">
+      <form action="/resto/<%= resto._id %>/respond/<%= review._id %>" method="post">
+          <p><%= resto.name %></p>
+          
+          <p>Response</p>
+          <div class="input-group">
+              <textarea class="form-control" name="info"></textarea>
+          </div>
+        <button type="submit" class="btn btn-primary mt-3">Submit</button>
+      </form>
+      <!-- <form action="/resto//delete" method="post">
+        <button type="submit" class="btn btn-danger mt-3">Delete</button>
+      </form> -->
+    </div>
+  </div>
+</div>

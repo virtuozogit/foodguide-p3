@@ -1,0 +1,26 @@
+<div class="col-12 col-md-8 mx-auto d-md-flex gap-2">
+
+    <!-- Bio -->
+    <div class="col-md-4">
+        <div class="card" style="max-width: 100vw;">
+            <div class="ratio ratio-4x3">
+                <img src="<%= user.userImagePath %>" class="card-img-top object-fit-cover rounded" alt="..." style="max-width: 100vw;">
+            </div>
+            <div class="card-body">
+              <h5 class="card-title"><%= user.username %></h5>
+              <p class="card-text">Bio</p>
+              <p class="card-text"><%= user.bio %></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile reviews -->
+    <div class="card col mt-2" style="max-width: 100vw;">
+      <%- include('../partials/review.ejs') %>
+    
+    <!-- See more comments button -->
+    <div class="col m-2">
+      <a href="#" class="btn btn-primary mt-2">See more reviews</a>
+    </div>
+  </div>
+</div>

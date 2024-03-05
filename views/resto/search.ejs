@@ -1,0 +1,14 @@
+<div class="col-12 col-lg-6 mx-auto">
+  <div class="card">
+    <div class="card-body">
+      <form action="/resto/<%= resto._id %>/search" method="get">
+          <p><%= resto.name %></p>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Search reviews" aria-label="Recipient's username" aria-describedby="button-addon2" name="searchReview">
+            <button class="btn btn-primary" type="submit" id="button-addon2">Search</button>
+          </div>
+      </form>
+      <%- include('../partials/review.ejs') %>
+    </div>
+  </div>
+</div>

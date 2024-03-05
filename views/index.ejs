@@ -1,0 +1,41 @@
+<div class="row mt-3">
+    <!-- Resto 1 -->
+    <% items.forEach(item => { %>
+      <div class="col-sm-8 mx-auto">    
+        <div class="card mb-3 mx-auto" style="max-width: 800px;">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <a href="/resto/<%= item._id%>" class="ratio ratio-1x1">
+                  <img src="<%= item.restoImagePath %>" class="img-fluid rounded-start object-fit-cover" alt="...">
+                </a>
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h5 class="card-title"><%= item.name %></h5>
+                  <p class="card-text">
+                    <%= item.ratingText %>
+                  </p>
+                  <p class="card-text text-truncate"><%= item.info %></p>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <% }) %>
+
+    <!-- Previous next -->
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item">
+          <form action="/prev" method="GET">
+            <button class="page-link" type="submit" >Previous</button>
+          </form>
+        </li>
+        <li class="page-item">
+          <form action="/next" method="GET">
+            <button class="page-link" type="submit" >Next</button>
+          </form>
+        </li>
+      </ul>
+    </nav>
+</div>

@@ -1,0 +1,54 @@
+
+<!-- review 1 -->
+<% reviews.forEach(review => { %>
+  <div class="card mb-2">
+    <div class="card-body">
+      <a href="/resto/<%= review.restoId %>"><%= review.restoName %></a>
+      <p><%= review.ratingText %></p>
+
+      <!-- images -->
+      <div class="col-12 col-md-6">
+        <div class="ratio ratio-4x3 mb-3">
+          <% if (review.fileType.substring(0, 1) == 'i') {%>
+            <img src="<%= review.reviewFilePath %>" class="img-fluid object-fit-cover" alt="...">
+          <% } else { %>
+            <video src="<%= review.reviewFilePath %>" class="img-fluid object-fit-cover" alt="..." controls>
+          <% } %>
+        </div>
+      </div>
+      
+      <a href="/user/<%= review.username %>" class="nav-link"><p class="text-secondary fw-bolder"><%= review.username %></p></a>
+      <p class="text-truncate" id="com-1"><%= review.info %></p>
+      <button type="button" class="btn btn-primary mb-2" id="btn-truncate" data-bs-toggle="button">See more</button>
+      <p class="fw-lighter">
+        <form action="/resto/<%= review.restoId %>/add-help" method="post">
+          <button type="submit" class="btn btn-primary m-1 btn-sm" id="btn-com-1" >👍</button> 
+          <%= (review.helpfulNum != null) ? review.helpfulNum : 0  %> person found this helpful
+        </form>
+      </p>
+
+      <% if (resto.ownerName == login.username) { %>
+        <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/respond/<%= review._id %>">Respond</a>
+      <% } %>
+
+      <!-- Owners response -->
+      <% if (review.ownerInfo != '') { %>
+        <div class="accordion" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Owner's Response
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+              <div class="accordion-body">
+                <%= review.ownerInfo %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+<% }) %>
+

@@ -1,0 +1,49 @@
+<div class="col-12 col-md-8 mx-auto">
+  <div id="carouselExample" class="carousel slide">
+    <div class="carousel-inner ratio ratio-21x9 rounded">
+      <div class="carousel-item active">
+        <img src="<%= resto.restoImagePath %>" class="d-block w-100 object-fit-cover" alt="...">
+      </div>
+    </div>
+  </div>
+  
+  <div class="card mb-1">
+    <div class="card-body">
+      <p class="fs-2"><%= resto.name %></p>
+    </div>
+  </div>
+  <div class="d-md-flex">
+    <div class="card flex-lg-grow-1 mb-1">
+      <div class="card-body">
+        <p class="fs-3">Ratings</p>
+        <p class="fs-4"><%= resto.ratingText %></p>
+        <p class="fs-5">1 reviews</p>
+      </div>
+      <div class="card-body mb-1">
+        <p class="fs-3">About</p>
+        <p class="fs-5"><%= resto.info %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comments / Reviews -->
+  <div class="d-md-flex">
+    <div class="card flex-lg-grow-1" style="max-width: 100vh;">
+      <div class="card-body">
+        <p class="fs-3">Review</p>
+        <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/create">Add / Edit a review</a>
+        <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/search">Search reviews</a>
+
+        <!-- review 1 -->
+        <%- include('../partials/review') %>
+        
+        <nav aria-label="Page navigation example">
+          <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="">Next</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

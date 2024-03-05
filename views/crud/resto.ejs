@@ -1,0 +1,35 @@
+<div class="col-md-8 mx-auto ">
+  <div class="card">
+    <div class="card-body">
+      <h1>CRUD App</h1>
+
+      <h2>Create Item</h2>
+      <h2>Items</h2>
+      <ul>
+        <% items.forEach(item => { %>
+          <li>
+            <%= item.name %>
+            <a href="/items/<%= item._id %>">View Details</a>
+            <a href="/items/<%= item._id  %>/edit">Edit/Delete</a>
+            <p><%= item.rating %></p>
+            <p><%= item.tags %></p>
+            <img src="<%= item.restoImagePath %>" height="200px">
+          </li>
+        <% }); %>
+        <!-- Create the add image to the thing -->
+        <form action="/crud/resto" method="POST" enctype="multipart/form-data">
+          <label>Image</label>
+          <input type="file" name="restoImage">
+          <br>
+          <label for="item_id">Choose a id:</label>
+          <select id="item_id" name="idlist">
+            <% items.forEach(item => { %>
+              <option value="<%= item._id %>"><%= item.name %></option>
+            <% }); %>
+          </select>
+          <button type="submit">Update</button>
+        </form>
+      </ul>
+    </div>
+  </div>
+</div>
