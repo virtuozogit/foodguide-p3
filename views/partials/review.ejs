@@ -5,6 +5,7 @@
     <div class="card-body">
       <a href="/resto/<%= review.restoId %>"><%= review.restoName %></a>
       <p><%= review.ratingText %></p>
+      <p><%= review.createdAtString %></p>
 
       <!-- images -->
       <div class="col-12 col-md-6">
@@ -16,19 +17,76 @@
           <% } %>
         </div>
       </div>
-      
-      <a href="/user/<%= review.username %>" class="nav-link"><p class="text-secondary fw-bolder"><%= review.username %></p></a>
-      <p class="text-truncate" id="com-1"><%= review.info %></p>
-      <button type="button" class="btn btn-primary mb-2" id="btn-truncate" data-bs-toggle="button">See more</button>
-      <p class="fw-lighter">
-        <form action="/resto/<%= review.restoId %>/add-help" method="post">
-          <button type="submit" class="btn btn-primary m-1 btn-sm" id="btn-com-1" >👍</button> 
-          <%= (review.helpfulNum != null) ? review.helpfulNum : 0  %> person found this helpful
-        </form>
-      </p>
 
-      <% if (resto.ownerName == login.username) { %>
-        <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/respond/<%= review._id %>">Respond</a>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+      <script>
+        $(document).ready(function() {
+            $("#btn-truncate-<%= review._id %>").click(function(){
+                $("#com-1-truncate-<%= review._id %>").toggleClass()
+                console.log('pressed.');
+            });
+
+            // Function to check if text will truncate
+            function checkTruncation() {
+                // calculate the text and length
+                var chars = 101;
+                var textWidth = 806.656;
+                var ratio = textWidth / chars;
+
+                console.log('ratio: ' + ratio);
+
+                var containerWidth = $('.card-body').width();
+                var textWidth = $('#com-1-truncate-<%= review._id %>').width();
+
+                // get amount of chars
+                var characterCount = $('#com-1-truncate-<%= review._id %>').text().length
+
+                // get current ratio
+                var currentRatio = $('#com-1-truncate-<%= review._id %>').width() / $('#com-1-truncate-<%= review._id %>').text().length
+                console.log(characterCount)
+                console.log(currentRatio)
+
+                console.log($('.card-body').width());
+                console.log($('#com-1-truncate-<%= review._id %>').width());
+
+                if (ratio > currentRatio) {
+                    console.log('Text will truncate.');
+                    // Add your logic here for when text truncates
+                    $('#btn-truncate-<%= review._id %>').show()
+                } else {
+                    console.log('Text will not truncate.');
+                    // Add your logic here for when text does not truncate
+                    $('#btn-truncate-<%= review._id %>').hide()
+                }
+                
+            }
+            // Call checkTruncation when the page loads
+            checkTruncation();
+        });
+      </script>
+
+      <a href="/user/<%= review.username %>" class="nav-link"><p class="text-secondary fw-bolder"><%= review.username %></p></a>
+      <p class="text-truncate" id="com-1-truncate-<%= review._id %>"><%= review.info %></p>
+      <button type="button" class="btn btn-primary mb-2" id="btn-truncate-<%= review._id %>" data-bs-toggle="button">See more</button>
+      <p class="fw-lighter">
+        <form action="/resto/<%= review.restoId %>/<%= review._id %>/add-help" method="post">
+          <% if (req.isAuthenticated()) {%>
+            <% if (review.helpfulUsers.includes(req.user.username)) {%>
+              <button type="submit" class="btn btn-success m-1 btn-sm" id="btn-com-1" >👍</button> 
+            <% } else { %>
+              <button type="submit" class="btn btn-primary m-1 btn-sm" id="btn-com-1" >👍</button> 
+            <% } %>
+          <% } %>
+          <%= (review.numHelpful != null) ? review.numHelpful : 0  %> person found this helpful
+        </form>
+      </p>        
+      
+      
+
+      <% if (req.user != null) { %>
+        <% if (resto.ownerName == req.user.username) { %>
+          <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/respond/<%= review._id %>">Respond</a>
+        <% } %>
       <% } %>
 
       <!-- Owners response -->

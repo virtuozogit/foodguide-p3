@@ -15,9 +15,27 @@ const userRouter = require('./routes/user')
 const restoRouter = require('./routes/resto')
 const crudRouter = require('./routes/crud')
 const crudRestoRouter = require('./routes/crudResto')
+const adminRouter = require('./routes/admin')
 
 // session
 const session = require('express-session')
+
+// the set up passport
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
+
+app.use(session({
+  secret: 'your-secret-key', // Change this to a secure random key
+  resave: false,
+  saveUninitialized: true,
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+var User = require('./models/users');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/views')
@@ -40,6 +58,7 @@ app.use('/user', userRouter)
 app.use('/resto', restoRouter)
 app.use('/crud', crudRouter)
 app.use('/crud/resto', crudRestoRouter)
+app.use('/admin', adminRouter)
 
 run()
 

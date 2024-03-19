@@ -7,7 +7,7 @@ const Review = require('../models/reviews')
 const fileMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'video/mp4', 'video/mpeg']
 
 router.get('/', (req, res) => {
-    res.send('resto')
+    res.redirect('/')
 })
 
 router.get('/:id', async (req, res) => {
@@ -18,7 +18,8 @@ router.get('/:id', async (req, res) => {
         login: login,
         resto: resto,
         reviews: reviews,
-        searchOptions: req.query
+        searchOptions: req.query,
+        req: req
     })
 })
 
@@ -32,7 +33,8 @@ router.get('/:id/create', async (req, res) => {
             login: login,
             resto: resto,
             review: review,
-            searchOptions: req.query
+            searchOptions: req.query,
+            req: req
         })
     } else {
         res.redirect(`/resto/${req.params.id}/edit`)
@@ -56,7 +58,8 @@ router.post('/:id/create', async (req, res) => {
                 restoId: req.params.id,
                 restoName: resto.name,
                 ownerName: resto.ownerName,
-                review: review
+                review: review,
+                req: req
             })
             
             console.log(req.params.id)
@@ -85,7 +88,8 @@ router.get('/:id/edit', async (req, res) => {
         login: login,
         resto: resto,
         review: review,
-        searchOptions: req.query
+        searchOptions: req.query,
+        req: req
     })
     
 })
@@ -135,18 +139,32 @@ router.post('/:id/delete', async (req, res) => {
 })
 
 // add helpful into thing
-router.post('/:id/add-help', async (req, res) => {
+router.post('/:id/:reviewId/add-help', async (req, res) => {
     const login = await Login.findOne({})
-    const review = await Review.findOne({username: login.username, restoId: req.params.id})
-    const resto = await Resto.findById(req.params.id)
+    const review = await Review.findById(req.params.reviewId)
 
     try {
-        if (login.logged) {
-            review.helpfulNum++
-            await review.save()
-            console.log('added')
-        }   
-        res.redirect(`/resto/${req.params.id}`)     
+        if (req.isAuthenticated()) {
+            if (review.helpfulUsers.includes(req.user.username)) {
+                let array = review.helpfulUsers
+                let valueToRemove = req.user.username;
+
+                array = array.filter(item => item !== valueToRemove);
+                review.helpfulUsers = array
+                await review.save()
+                console.log('removed')
+                res.redirect(`/resto/${req.params.id}`)  
+            } else {
+                review.helpfulNum = 0
+                review.helpfulUsers.push(req.user.username)
+                await review.save()
+                console.log('added')
+                res.redirect(`/resto/${req.params.id}`)   
+            }
+        } else {
+            console.log('failed')
+            res.redirect(`/resto/${req.params.id}`)   
+        }
     } catch {
         console.log('error in adding helpful')
         res.redirect(`/resto/${req.params.id}`)
@@ -175,7 +193,8 @@ router.get('/:id/search', async (req, res) => {
             login: login,
             pageNum: login.pageNum,
             resto: resto,
-            reviews: items
+            reviews: items,
+            req: req
         })
         console.log('login: ' + login.username)
     } catch {
@@ -188,7 +207,7 @@ router.get('/:id/search', async (req, res) => {
 router.get('/:id/respond/:reviewId', async (req, res) => {
     const resto = await Resto.findById(req.params.id)
     const login = await Login.findOne({})
-    const review = await Review.findOne({})
+    const review = await Review.findById(req.params.reviewId)
 
     try {
         const login = await Login.findOne({})
@@ -198,7 +217,8 @@ router.get('/:id/respond/:reviewId', async (req, res) => {
             pageNum: login.pageNum,
             resto: resto,
             reviews: review,
-            review: review
+            review: review,
+            req: req
         })
         console.log('rendered')
     } catch {
@@ -214,7 +234,10 @@ router.post('/:id/respond/:reviewId', async (req, res) => {
 
     try {
         const login = await Login.findOne({})
-        if (req.body.info != '' && req.body.info != null && login.username == review.ownerName){
+        if (req.body.info != '' && req.body.info != null && req.user.username == review.ownerName){
+            console.log(req.body.info)
+            review.ownerInfo = req.body.info
+            await review.save()
             console.log('success')
         }
         res.redirect(`/resto/${req.params.id}`)

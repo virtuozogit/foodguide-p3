@@ -33,10 +33,12 @@
                       </button>
                       <div class="collapse navbar-collapse" id="navbarScroll">
                         <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
-                          <li class="nav-item">
-                            <a class="nav-link" href="/user/<%= login.username %>">Profile</a>
-                          </li>
-                          <% if (!login.logged) {%>
+                          <% if (req.isAuthenticated()) {%>
+                            <li class="nav-item">
+                              <a class="nav-link" href="/user/<%= req.user.username %>">Profile</a>
+                            </li>
+                          <% } %>
+                          <% if (!req.isAuthenticated()) {%>
                             <li class="nav-item" id="nav-signin">
                               <a class="nav-link" href="/login" id="login">Sign in</a>
                             </li>
@@ -50,9 +52,21 @@
                               Filter
                             </button>
                           </li>
+                          <% if (req.isAuthenticated()) {%>
+                            <li class="nav-item">
+                              <a class="nav-link" href="/setting">Settings</a>
+                            </li>
+                          <% } %>
                           <li class="nav-item">
-                            <a class="nav-link" href="/setting">Settings</a>
+                            <a class="nav-link" href="/about">About</a>
                           </li>
+                          <% if (req.isAuthenticated()) {%>
+                            <% if (req.user.admin) {%>
+                              <li class="nav-item">
+                                <a class="nav-link" href="/admin">Admin</a>
+                              </li>
+                            <% } %>
+                          <% } %>
                         </ul>
                       </div>
                     </div>
@@ -66,7 +80,7 @@
         </div>
 
         <!-- Filter: Off Canvas -->
-        <% if (login.currentRoute == '/') {%>
+        <% if (req.path == '/') { %>
           <div class="offcanvas offcanvas-start text-bg-dark me-5 mt-5 show" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="offcanvasExampleLabel">Filter</h5>
@@ -93,7 +107,7 @@
               </form>
             </div>
           </div>
-        <%} else if (login.currentRoute == '/') { %>
+        <%} else { %>
           <div class="offcanvas offcanvas-start text-bg-dark me-5 mt-5" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
             <div class="offcanvas-header">
               <h5 class="offcanvas-title" id="offcanvasExampleLabel">Filter</h5>

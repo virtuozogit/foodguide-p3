@@ -1,0 +1,37 @@
+<div class="col-md-8 mx-auto ">
+  <div class="card">
+    <div class="card-body">
+      <h1>Resto CRUD</h1>
+      <a class="btn btn-primary" href="#" role="button">Add</a>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Resto Name</th>
+            <th scope="col">Edit</th>
+            <th scope="col">View</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% restos.forEach(resto => { %>
+            <tr>
+              <td scope="row"><%= resto._id %></td>
+              <td scope="row"><%= resto.name %></td>
+              <td>
+                  <a class="btn btn-primary" href="#" role="button">Edit</a>
+              </td>
+              <td>
+                  <a class="btn btn-primary" href="/resto/<%= resto._id %>" role="button">View</a>
+              </td>
+              <td>
+                  <a class="btn btn-danger" href="#" role="button">Delete</a>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>

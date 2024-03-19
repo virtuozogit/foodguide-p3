@@ -6,7 +6,7 @@ const Review = require('../models/reviews')
 const Resto = require('../models/restaurants')
 
 router.get('/', (req, res) => {
-    res.send('user link')
+    res.redirect('/')
 })
 
 router.get('/:username', async (req, res) => {
@@ -23,7 +23,8 @@ router.get('/:username', async (req, res) => {
                 user: user,
                 reviews: review,
                 searchOptions: req.query,
-                resto: resto
+                resto: resto,
+                req: req
             })
         }
     } catch {

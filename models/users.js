@@ -1,15 +1,14 @@
 const mongoose = require("mongoose")
 const path = require('path')
+var passportLocalMongoose = require('passport-local-mongoose');
 
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true,
         lowercase: true
     },
     password: {
         type: String,
-        required: true,
     },
     bio: {
         type: String,
@@ -24,6 +23,10 @@ const userSchema = new mongoose.Schema({
     },
     fileType: {
         type: String,
+    },
+    admin: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -33,5 +36,7 @@ userSchema.virtual('userImagePath').get(function (){
         return `data:${this.fileType};charset=utf-8;base64,${this.image.toString('base64')}`
     }
 })
+
+userSchema.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model("User", userSchema)

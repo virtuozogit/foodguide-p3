@@ -28,12 +28,13 @@
 
   <!-- Comments / Reviews -->
   <div class="d-md-flex">
-    <div class="card flex-lg-grow-1" style="max-width: 100vh;">
+    <div class="card flex-lg-grow-1" style="max-width: 200vh;">
       <div class="card-body">
         <p class="fs-3">Review</p>
-        <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/create">Add / Edit a review</a>
+        <% if (req.isAuthenticated()) { %>
+          <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/create">Add / Edit a review</a>
+        <% } %>
         <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/search">Search reviews</a>
-
         <!-- review 1 -->
         <%- include('../partials/review') %>
         

@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+var passport = require('passport');
 
 // Models
 const Restaurant = require('../models/restaurants')
@@ -14,22 +15,12 @@ const imageMimeTypes = ['image/jpeg', 'image/png', 'image/gif']
 const session = require('express-session');
 
 router.use(session({
-    secret: 'your-secret-key', // Change this to a secure random key
+    secret: process.env.SECRET, // Change this to a secure random key
     resave: false,
     saveUninitialized: true,
 }));
 
-router.get('/', async (req, res) => {
-    const page = req.query.page || 1;
-    const pageSize = 3;
-    const skipValue = (page - 1) * pageSize
-    const log = await Login.findOne({})
-    console.log(req.session)
-    console.log(`Current route: ${req.path}`);
-    log.currentRoute = req.path
-    await log.save()
-    console.log(`Logins route: ${req.path}`);
-
+async function updateRestos() {
     // Update the ratings
     const restos = await Restaurant.find()
     restos.forEach(async resto => {
@@ -47,6 +38,21 @@ router.get('/', async (req, res) => {
             console.log('error in updating')
         }
     })
+}
+
+router.get('/', async (req, res) => {
+    await updateRestos()
+    const page = req.query.page || 1;
+    const pageSize = 3;
+    const skipValue = (page - 1) * pageSize
+    const log = await Login.findOne({})
+
+    req.session.pageNum = page
+
+    console.log(req.session)
+    console.log(`Current route: ${req.path}`);
+    log.currentRoute = req.path
+    await log.save()
 
     // search functions
     let query = Restaurant.find()
@@ -70,12 +76,13 @@ router.get('/', async (req, res) => {
 
     try {
         const login = await Login.findOne({})
-        const items = await query.sort({rating: -1}).skip(login.pageNum * 3).limit(3).exec()
+        const items = await query.sort({rating: -1}).skip(login.pageNum * 3).limit(3).exec()        
         res.render('index', {
             items: items,
             searchOptions: req.query,
             login: login,
-            pageNum: login.pageNum
+            pageNum: login.pageNum,
+            req: req
         })
         console.log('login: ' + login.username)
         log.currentRoute = '';
@@ -83,7 +90,6 @@ router.get('/', async (req, res) => {
         console.log(`new Logins route: ${req.path}`);
     } catch {
         console.log('error')
-        res.redirect('/')
     }
 })
 
@@ -114,32 +120,36 @@ router.get('/login',  async (req, res) => {
     res.render('login/login', {
         error: '',
         login: login,
-        searchOptions: req.query
+        searchOptions: req.query,
+        req: req
     })
 })
 
 // login system
-router.post('/login', async (req, res) => {  
-    const username = req.body.username
-    const password = req.body.password
-    const remember = req.body.remember
+// router.post('/login', async (req, res) => {  
+//     const username = req.body.username
+//     const password = req.body.password
+//     const remember = req.body.remember
     
-    const user = await User.findOne({username: username, password: password})
-    const logins = await Login.findOne({})
-    if (user == null){
-        const error = "Wrong input"
-        res.render('login/login', {
-            error: 'Wrong input'
-        })
-    } else {
-        logins.username = username
-        logins.logged = true
-        logins.remember = Boolean(req.body.remember)
-        logins.save()
+//     const user = await User.findOne({username: username, password: password})
+//     const logins = await Login.findOne({})
+//     if (user == null){
+//         const error = "Wrong input"
+//         res.render('login/login', {
+//             error: 'Wrong input'
+//         })
+//     } else {
+//         logins.username = username
+//         logins.logged = true
+//         logins.remember = Boolean(req.body.remember)
+//         logins.save()
         
-        res.redirect('/')
-    }
-})
+//         res.redirect('/')
+//     }
+// })
+router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
+    res.redirect('/');
+});
 
 // register
 router.get('/register',  async (req, res) => {
@@ -147,34 +157,55 @@ router.get('/register',  async (req, res) => {
     res.render('login/register', {
         error: '',
         login: login,
-        searchOptions: req.query
+        searchOptions: req.query,
+        req: req
     })
 })
 
 // Register user / create user
-router.post('/register', async (req, res) => {
-    const user = new User({
-        username: req.body.username,
-        password: req.body.password,
-        bio: req.body.bio
-    })
+// router.post('/register', async (req, res) => {
+//     const user = new User({
+//         username: req.body.username,
+//         password: req.body.password,
+//         bio: req.body.bio
+//     })
     
-    try {
-        const logins = await Login.findOne({})
-        saveFile(user, req.body.userImage)
-        logins.username = user.username
-        logins.logged = true
-        const newUser = await user.save()
-        res.redirect(`/user/${user.username}`)
+//     try {
+//         const logins = await Login.findOne({})
+//         saveFile(user, req.body.userImage)
+//         logins.username = user.username
+//         logins.logged = true
+//         const newUser = await user.save()
+//         res.redirect(`/user/${user.username}`)
       
-    } catch {
-      console.log("Error in upload")
-      res.render('login/register', {
-        error: 'Wrong input',
-        login: login
-      })
-    }
-})
+//     } catch {
+//       console.log("Error in upload")
+//       res.render('login/register', {
+//         error: 'Wrong input',
+//         login: login
+//       })
+//     }
+// })
+
+router.post('/register', function(req, res) {
+    const user = new User({ username : req.body.username , bio : req.body.bio })
+    User.register(user, req.body.password, function(err, account) {
+        if (err) {
+            console.log(err)
+            res.render('login/register', {
+                error: 'Error in register',
+                searchOptions: req.query,
+                req: req
+            })
+        }
+
+        passport.authenticate('local')(req, res, function () {
+            saveFile(user, req.body.userImage)
+            user.save()
+            res.redirect(`/user/${req.user.username}`);
+        });
+    });
+});
 
 // logout?
 router.get('/logout',  async (req, res) => {
@@ -183,29 +214,28 @@ router.get('/logout',  async (req, res) => {
     logins.logged = false
     logins.remember = false
     logins.save()
-    res.redirect('/')
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/');
+    });
 })
 
 // settings 
-router.get('/setting',  async (req, res) => {
+router.get('/setting', ensureAuthenticated,  async (req, res) => {
     try {
         const login = await Login.findOne({})
         const user = await User.findOne({username: login.username})
-        if (user == null) {
-            res.redirect('/')
-        } else {
-            res.render('setting', {
-                login: login,
-                searchOptions: req.query
-            })
-        }
+        res.render('setting', {
+            login: login,
+            searchOptions: req.query
+        })
     } catch {
         res.redirect('/')
     }
 })
 
 // post settings
-router.post('/setting',  async (req, res) => {
+router.post('/setting', ensureAuthenticated,  async (req, res) => {
     try {
         const login = await Login.findOne({})
         const user = await User.findOne({username: login.username})
@@ -230,7 +260,13 @@ router.post('/setting',  async (req, res) => {
     }
 })
 
-// possible delete the previous userImage thing
+// about page
+router.get('/about',  async (req, res) => {
+    res.render('about', {
+        searchOptions: req.query,
+        req: req
+    })
+})
 
 // save the file
 function saveFile(user, fileEncoded){
@@ -243,6 +279,13 @@ function saveFile(user, fileEncoded){
         user.fileType = file.type
         console.log('success in upload')
     }
+}
+
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {    
+        return next();
+    }
+    res.redirect('/');
 }
 
 module.exports = router
