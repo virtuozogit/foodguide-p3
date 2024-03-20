@@ -1,0 +1,12 @@
+<div class="col-md-8 mx-auto ">
+  <div class="card">
+    <div class="card-body">
+      <h1>Delete Resto</h1>
+      <form action="/admin/<%= resto._id %>/delete" method="POST">
+        <h2>Are you sure?</h2>
+        <button class="btn btn-danger py-2" type="submit">Delete</button>
+        <a href="/admin" class="btn btn-primary py-2">Back</a>
+      </form>
+    </div>
+  </div>
+</div>

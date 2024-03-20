@@ -25,12 +25,10 @@ router.get('/:id', async (req, res) => {
 
 router.get('/:id/create', async (req, res) => {
     const resto = await Resto.findById(req.params.id)
-    const login = await Login.findOne({})
-    const review = await Review.findOne({username: login.username, restoId: req.params.id})
+    const review = await Review.findOne({username: req.user.username, restoId: req.params.id})
     
     if (review == null) {
         res.render('resto/create', {
-            login: login,
             resto: resto,
             review: review,
             searchOptions: req.query,
@@ -45,21 +43,20 @@ router.get('/:id/create', async (req, res) => {
 // submit / create the review
 router.post('/:id/create', async (req, res) => {
     const login = await Login.findOne({})
-    const review = await Review.findOne({username: login.username, restoId: req.params.id})
+    const review = await Review.findOne({username: req.user.username, restoId: req.params.id})
     const resto = await Resto.findOne({_id: req.params.id})
     const rating = Number(req.body.rating)
     
     try {
         if (review == null) {
             const newReview = new Review({
-                username: login.username,
+                username: req.user.username,
                 rating: rating,
                 info: req.body.info,
                 restoId: req.params.id,
                 restoName: resto.name,
                 ownerName: resto.ownerName,
-                review: review,
-                req: req
+                createdAt: Date.now()
             })
             
             console.log(req.params.id)
@@ -82,7 +79,7 @@ router.post('/:id/create', async (req, res) => {
 router.get('/:id/edit', async (req, res) => {
     const resto = await Resto.findById(req.params.id)
     const login = await Login.findOne({})
-    const review = await Review.findOne({username: login.username, restoId: req.params.id})
+    const review = await Review.findOne({username: req.user.username, restoId: req.params.id})
     
     res.render('resto/edit', {
         login: login,
@@ -96,21 +93,21 @@ router.get('/:id/edit', async (req, res) => {
 
 router.post('/:id/edit', async (req, res) => {
     const login = await Login.findOne({})
-    const review = await Review.findOne({username: login.username, restoId: req.params.id})
+    const review = await Review.findOne({username: req.user.username, restoId: req.params.id})
     const resto = await Resto.findOne({_id: req.params.id})
     const rating = Number(req.body.rating)
     
     try {
-        if (req.body.reviewFile != null) {
-            review.rating = rating
+        if (req.body.info != '' && req.body.rating !== '') {
+            review.rating = req.body.rating
             review.info = req.body.info
-            saveFile(review, req.body.reviewFile) 
-        } else {
-            review.rating = rating
-            review.info = req.body.info
-        }
-        
-        await review.save()
+
+            if (req.body.reviewFile && req.body.reviewFile != '') {
+                saveFile(review, req.body.reviewFile)
+            }
+
+            await review.save()  
+        } 
         
         res.redirect(`/resto/${req.params.id}`)     
     } catch {
@@ -120,10 +117,20 @@ router.post('/:id/edit', async (req, res) => {
 
 })
 
+// delete get
+router.get('/:id/delete', async (req, res) => {
+    const review = await Review.findOne({username: req.user.username, restoId: req.params.id})
+    res.render('resto/delete', {
+        req: req,
+        searchOptions: req.query,
+        review: review     
+    })   
+})
+
+
 // delete 
 router.post('/:id/delete', async (req, res) => {
-    const login = await Login.findOne({})
-    const review = await Review.findOne({username: login.username, restoId: req.params.id})
+    const review = await Review.findOne({username: req.user.username, restoId: req.params.id})
 
     try {
         if (review == null) {

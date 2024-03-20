@@ -1,0 +1,28 @@
+<div class="col-md-8 mx-auto ">
+  <div class="card">
+    <div class="card-body">
+      <h1>Edit Resto</h1>
+      <form action="/admin/<%= resto._id %>/edit" method="POST">
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Resto name</label>
+          <input type="text" class="form-control" id="restoName" name="restoName" value="<%= resto.name %>">
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Info</label>
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="info"><%= resto.info %></textarea>
+        </div>
+        <p>Edit Image</p>
+        <div class="container">
+          <img src="<%= resto.restoImagePath %>" alt="Small Image" class="img-thumbnail" width="200" height="200">
+          <p></p>
+        </div>
+        
+        <div class="input-group mb-3" id="fileDiv">
+          <input type="file" class="form-control filepond" id="inputGroupFile01" name="restoImage">
+        </div>
+        <button class="btn btn-primary py-2" type="submit">Edit</button>
+        <a href="/admin" class="btn btn-primary py-2">Back</a>
+      </form>
+    </div>
+  </div>
+</div>

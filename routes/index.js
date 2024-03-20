@@ -56,6 +56,7 @@ router.get('/', async (req, res) => {
 
     // search functions
     let query = Restaurant.find()
+    let queryNum = 0
     if (req.query.searchTags != null && req.query.ratingFilter != null) {
         query = Restaurant.find({tags: { 
             $regex: new RegExp(req.query.searchTags, 'i') 
@@ -76,15 +77,21 @@ router.get('/', async (req, res) => {
 
     try {
         const login = await Login.findOne({})
-        const items = await query.sort({rating: -1}).skip(login.pageNum * 3).limit(3).exec()        
+        queryNum = await Restaurant.countDocuments(query)
+        const items = await query.sort({rating: -1}).skip(login.pageNum * 3).limit(3).exec()      
+        
+        let numItems = queryNum
+        console.log('Num of items:' + numItems)
         res.render('index', {
             items: items,
             searchOptions: req.query,
             login: login,
             pageNum: login.pageNum,
-            req: req
+            req: req,
+            queryLength: numItems
         })
         console.log('login: ' + login.username)
+        console.log(req.query)
         log.currentRoute = '';
         await log.save()
         console.log(`new Logins route: ${req.path}`);
@@ -199,9 +206,9 @@ router.post('/register', function(req, res) {
             })
         }
 
-        passport.authenticate('local')(req, res, function () {
+        passport.authenticate('local')(req, res, async function () {
             saveFile(user, req.body.userImage)
-            user.save()
+            await user.save()
             res.redirect(`/user/${req.user.username}`);
         });
     });
@@ -227,7 +234,8 @@ router.get('/setting', ensureAuthenticated,  async (req, res) => {
         const user = await User.findOne({username: login.username})
         res.render('setting', {
             login: login,
-            searchOptions: req.query
+            searchOptions: req.query,
+            req: req
         })
     } catch {
         res.redirect('/')
@@ -237,16 +245,11 @@ router.get('/setting', ensureAuthenticated,  async (req, res) => {
 // post settings
 router.post('/setting', ensureAuthenticated,  async (req, res) => {
     try {
-        const login = await Login.findOne({})
-        const user = await User.findOne({username: login.username})
-        
-        console.log(req.body.userImage)
+        const user = await User.findOne({username: req.user.username})
 
-        if (req.body.userImage != null) {
+        if (req.body.userImage && req.body.userImage !== '') {
             saveFile(user, req.body.userImage)
-            console.log('working')
         }
-        
         
         if (req.body.bio != null && req.body.bio != '') {
             user.bio = req.body.bio

@@ -1,0 +1,23 @@
+<div class="col-md-8 mx-auto ">
+  <div class="card">
+    <div class="card-body">
+      <h1>Add Resto</h1>
+      <form action="/admin/add" method="POST">
+        <div class="mb-3">
+          <label for="exampleFormControlInput1" class="form-label">Resto name</label>
+          <input type="text" class="form-control" id="restoName" name="restoName">
+        </div>
+        <div class="mb-3">
+          <label for="exampleFormControlTextarea1" class="form-label">Info</label>
+          <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="info"></textarea>
+        </div>
+        <p>Add Image</p>
+        <div class="input-group mb-3">
+          <input type="file" class="form-control filepond" id="inputGroupFile01" name="restoImage">
+        </div>
+        <button class="btn btn-primary py-2" type="submit">Add</button>
+        <a href="/admin" class="btn btn-primary py-2">Back</a>
+      </form>
+    </div>
+  </div>
+</div>

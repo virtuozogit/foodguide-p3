@@ -30,13 +30,23 @@ const restaurantSchema = new mongoose.Schema({
     },
     fileType: {
         type: String,
+    },
+    restoImage: {
+        type: Buffer
     }
 })
 
 // image path
+// restaurantSchema.virtual('restoImagePath').get(function (){
+//     if (this.image != null){
+//         return path.join('/', restoImageBasePath, this.image)
+//     }
+// })
+
+// resto image path
 restaurantSchema.virtual('restoImagePath').get(function (){
-    if (this.image != null){
-        return path.join('/', restoImageBasePath, this.image)
+    if (this.restoImage != null && this.fileType != null){
+        return `data:${this.fileType};charset=utf-8;base64,${this.restoImage.toString('base64')}`
     }
 })
 

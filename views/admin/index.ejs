@@ -2,7 +2,7 @@
   <div class="card">
     <div class="card-body">
       <h1>Resto CRUD</h1>
-      <a class="btn btn-primary" href="#" role="button">Add</a>
+      <a class="btn btn-primary" href="/admin/add" role="button">Add</a>
       <table class="table">
         <thead>
           <tr>
@@ -19,13 +19,13 @@
               <td scope="row"><%= resto._id %></td>
               <td scope="row"><%= resto.name %></td>
               <td>
-                  <a class="btn btn-primary" href="#" role="button">Edit</a>
+                  <a class="btn btn-primary" href="/admin/<%= resto._id %>/edit" role="button">Edit</a>
               </td>
               <td>
                   <a class="btn btn-primary" href="/resto/<%= resto._id %>" role="button">View</a>
               </td>
               <td>
-                  <a class="btn btn-danger" href="#" role="button">Delete</a>
+                  <a class="btn btn-danger" href="/admin/<%= resto._id %>/delete" role="button">Delete</a>
               </td>
             </tr>
           <% }); %>

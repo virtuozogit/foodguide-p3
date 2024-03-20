@@ -17,7 +17,7 @@
       <div class="card-body">
         <p class="fs-3">Ratings</p>
         <p class="fs-4"><%= resto.ratingText %></p>
-        <p class="fs-5">1 reviews</p>
+        <p class="fs-5"><%= reviews.length %> reviews</p>
       </div>
       <div class="card-body mb-1">
         <p class="fs-3">About</p>
@@ -33,17 +33,29 @@
         <p class="fs-3">Review</p>
         <% if (req.isAuthenticated()) { %>
           <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/create">Add / Edit a review</a>
+          <% 
+            reviews.forEach(review => { 
+              if (review.username == req.user.username) {
+          %>
+                <a type="button" href="/resto/<%= resto._id %>/delete" class="btn btn-danger mb-2">Delete</a>  
+          <%    return
+              }
+          }) %>
+          
         <% } %>
         <a type="button" class="btn btn-primary mb-2" href="/resto/<%= resto._id %>/search">Search reviews</a>
         <!-- review 1 -->
         <%- include('../partials/review') %>
         
-        <nav aria-label="Page navigation example">
+        <!-- 
+          <nav aria-label="Page navigation example">
           <ul class="pagination">
             <li class="page-item"><a class="page-link" href="">Previous</a></li>
             <li class="page-item"><a class="page-link" href="">Next</a></li>
           </ul>
         </nav>
+          -->
+        
       </div>
     </div>
   </div>

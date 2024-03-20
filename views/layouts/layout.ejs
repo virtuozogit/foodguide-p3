@@ -27,7 +27,7 @@
             <div class="col-md-8 mx-auto ">
                 <nav class="navbar navbar-expand-lg navbar-dark">
                     <div class="container-fluid">
-                      <a class="navbar-brand" href="/">Foodguide</a>
+                      <a class="navbar-brand" href="/"><h4>Foodguide</h4></a>
                       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                       </button>
@@ -35,35 +35,35 @@
                         <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
                           <% if (req.isAuthenticated()) {%>
                             <li class="nav-item">
-                              <a class="nav-link" href="/user/<%= req.user.username %>">Profile</a>
+                              <a class="nav-link" href="/user/<%= req.user.username %>"><h4>Profile</h4></a>
                             </li>
                           <% } %>
                           <% if (!req.isAuthenticated()) {%>
                             <li class="nav-item" id="nav-signin">
-                              <a class="nav-link" href="/login" id="login">Sign in</a>
+                              <a class="nav-link" href="/login" id="login"><h4>Sign in</h4></a>
                             </li>
                           <% } else { %>
                             <li class="nav-item" id="nav-logout">
-                              <a class="nav-link" href="/logout">Log out</a>
+                              <a class="nav-link" href="/logout"><h4>Log out</h4></a>
                             </li>
                           <% } %>
                           <li class="nav-item">
                             <button class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">
-                              Filter
+                              <h4>Filter</h4>
                             </button>
                           </li>
                           <% if (req.isAuthenticated()) {%>
                             <li class="nav-item">
-                              <a class="nav-link" href="/setting">Settings</a>
+                              <a class="nav-link" href="/setting"><h4>Settings</h4></a>
                             </li>
                           <% } %>
                           <li class="nav-item">
-                            <a class="nav-link" href="/about">About</a>
+                            <a class="nav-link" href="/about"><h4>About</h4></a>
                           </li>
                           <% if (req.isAuthenticated()) {%>
                             <% if (req.user.admin) {%>
                               <li class="nav-item">
-                                <a class="nav-link" href="/admin">Admin</a>
+                                <a class="nav-link" href="/admin"><h4>Admin</h4></a>
                               </li>
                             <% } %>
                           <% } %>

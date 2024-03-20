@@ -25,7 +25,8 @@ router.get('/', async (req, res) => {
     const items = await Restaurant.find()
     res.render('crud/resto', {
       items: items,
-      searchOptions: req.query
+      searchOptions: req.query,
+      req: req
     })
   } catch {
     res.redirect('/')

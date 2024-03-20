@@ -24,18 +24,27 @@
     <% }) %>
 
     <!-- Previous next -->
-    <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        <li class="page-item">
-          <form action="/prev" method="GET">
-            <button class="page-link" type="submit" >Previous</button>
-          </form>
-        </li>
-        <li class="page-item">
-          <form action="/next" method="GET">
-            <button class="page-link" type="submit" >Next</button>
-          </form>
-        </li>
-      </ul>
-    </nav>
+    
+    <% if (queryLength > 3 ) {%>
+      <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+          <li class="page-item">
+            <form action="/prev" method="GET">
+              <button class="page-link" type="submit" >Previous</button>
+            </form>
+          </li>
+          <li class="page-item">
+            <form action="/next" method="GET">
+              <button class="page-link" type="submit" >Next</button>
+            </form>
+          </li>
+        </ul>
+      </nav>
+    <% } else if (queryLength === 0) { %>
+      <!-- No input -->
+      <div class="col-2 mx-auto">   
+        <h5 class="text-light">No results found!</h5>
+      </div>
+    <% } %>
+    
 </div>
