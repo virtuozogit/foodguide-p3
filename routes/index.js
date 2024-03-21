@@ -154,8 +154,24 @@ router.get('/login',  async (req, res) => {
 //         res.redirect('/')
 //     }
 // })
-router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
-    res.redirect('/');
+// router.post('/login', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
+//     res.redirect('/');
+// })
+router.post('/login', function(req, res, next) {
+    passport.authenticate('local', function(err, user) {
+        if (err) { return next(err); }
+        if (!user) {
+            res.render('login/login', {
+                error: 'Error in username/password',
+                searchOptions: req.query,
+                req: req
+            })
+        }
+        req.logIn(user, function(err) {
+            if (err) { return next(err); }
+            return res.redirect('/');
+        });
+    })(req, res, next);
 });
 
 // register

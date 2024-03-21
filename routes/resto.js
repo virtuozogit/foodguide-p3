@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const resto = await Resto.findById(req.params.id)
-    const reviews = await Review.find({restoId: req.params.id}).sort({helpfulNum:-1}).limit(3)
+    const reviews = await Review.find({restoId: req.params.id}).sort({helpfulNum: -1}).limit(3)
     const login = await Login.findOne({})
     res.render('resto/resto', {
         login: login,
@@ -158,11 +158,12 @@ router.post('/:id/:reviewId/add-help', async (req, res) => {
 
                 array = array.filter(item => item !== valueToRemove);
                 review.helpfulUsers = array
+                review.helpfulNum = array.length
                 await review.save()
                 console.log('removed')
                 res.redirect(`/resto/${req.params.id}`)  
             } else {
-                review.helpfulNum = 0
+                review.helpfulNum++
                 review.helpfulUsers.push(req.user.username)
                 await review.save()
                 console.log('added')

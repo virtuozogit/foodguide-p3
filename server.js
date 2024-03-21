@@ -8,6 +8,7 @@ const ejs = require('ejs')
 const expressLayouts = require('express-ejs-layouts')
 const bodyParser = require('body-parser')
 const methodOverride = require('method-override');
+var flash = require('connect-flash');
 
 // Create routes
 const indexRouter = require('./routes/index')
@@ -51,6 +52,8 @@ mongoose.connect(process.env.DATABASE_URL)
 const db = mongoose.connection
 db.on('error', error => console.error(error))
 db.once('error', error => console.log('Connected to Mongoose'))
+
+app.use(flash());
 
 // Use Routes
 app.use('/', indexRouter)
