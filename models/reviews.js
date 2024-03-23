@@ -91,5 +91,21 @@ reviewSchema.virtual('createdAtString').get(function (){
     return formattedDate
 })
 
+reviewSchema.virtual('formatDate').get(function() {
+    if (this.createdAt) {
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        return this.createdAt.toLocaleString('en-US', options);
+    }
+    return ''; 
+});
+
 module.exports = mongoose.model("Review", reviewSchema)
 // module.exports.reviewFileBasePath = reviewFileBasePath
