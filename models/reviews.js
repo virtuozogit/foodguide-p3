@@ -100,7 +100,8 @@ reviewSchema.virtual('formatDate').get(function() {
             hour: 'numeric',
             minute: '2-digit',
             second: '2-digit',
-            hour12: true
+            hour12: true,
+            timeZone: 'Asia/Manila' // Set the timezone to Philippine time
         };
         return this.createdAt.toLocaleString('en-US', options);
     }
